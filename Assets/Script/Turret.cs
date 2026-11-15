@@ -1,4 +1,13 @@
+using System.Collections;
 using UnityEngine;
+
+// 레벨 하나에 해당하는 데이터 (Inspector에서 레벨 순서대로 입력)
+[System.Serializable]
+public class TurretLevel
+{
+    public Sprite sprite;                // 이 레벨의 포탑 이미지
+    public Projectile projectilePrefab;  // 이 레벨에서 발사하는 투사체
+}
 
 public class Turret : MonoBehaviour
 {
@@ -7,8 +16,9 @@ public class Turret : MonoBehaviour
     public float range = 2.5f;           // 사거리
     public float fireInterval = 1f;      // 발사 간격(초)
     public int level = 1;                // 현재 레벨 (1~3)
-    public Projectile projectilePrefab;  // 발사할 투사체 프리팹
-    public Sprite[] levelSprites;        // 레벨별 이미지 (비워 둬도 됨)
+
+    [Header("레벨별 외형과 투사체 (1, 2, 3 순서)")]
+    public TurretLevel[] levels;
 
     // 기획서: 레벨 1,2,3 → 공격력 1,2,3
     public int Damage => level;
@@ -16,11 +26,14 @@ public class Turret : MonoBehaviour
     float timer;                         // 다음 발사까지 남은 시간
     SpriteRenderer sr;
     Color baseColor;
+    Vector3 baseScale;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         baseColor = sr.color;
+        baseScale = transform.localScale;
+        UpdateVisual();                  // 1레벨 이미지 적용
     }
 
     void Update()
@@ -33,11 +46,22 @@ public class Turret : MonoBehaviour
         Enemy target = FindTarget();
         if (target == null) return;
 
-        // 투사체 생성 후 대상과 공격력을 알려줌
-        Projectile p = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+        // 현재 레벨의 투사체를 생성
+        Projectile prefab = CurrentProjectile();
+        if (prefab == null) return;
+
+        Projectile p = Instantiate(prefab, transform.position, Quaternion.identity);
         p.Init(target, Damage);
 
         timer = fireInterval;
+    }
+
+    // 현재 레벨의 투사체 프리팹 (데이터가 비어 있으면 null)
+    Projectile CurrentProjectile()
+    {
+        if (levels == null || levels.Length == 0) return null;
+        int index = Mathf.Clamp(level - 1, 0, levels.Length - 1);
+        return levels[index].projectilePrefab;
     }
 
     // 사거리 안에서 가장 가까운 적을 반환
@@ -58,19 +82,40 @@ public class Turret : MonoBehaviour
         return best;
     }
 
-    // 강화: 레벨이 오르면 공격력(= 레벨)도 자동으로 오름
+    // 강화: 레벨이 오르면 공격력(= 레벨)도 자동으로 오르고 외형이 바뀜
     public void Upgrade()
     {
         if (level >= MaxLevel) return;
         level++;
         UpdateVisual();
+        StopAllCoroutines();
+        StartCoroutine(UpgradeEffect());
     }
 
-    // 레벨에 맞는 스프라이트로 교체 (levelSprites를 채웠을 때만)
+    // 현재 레벨에 맞는 이미지로 교체
     void UpdateVisual()
     {
-        if (levelSprites != null && levelSprites.Length >= level)
-            sr.sprite = levelSprites[level - 1];
+        if (levels == null || levels.Length == 0) return;
+
+        int index = Mathf.Clamp(level - 1, 0, levels.Length - 1);
+        if (levels[index].sprite != null)
+            sr.sprite = levels[index].sprite;
+    }
+
+    // 강화 연출: 잠깐 커졌다가 돌아옴
+    IEnumerator UpgradeEffect()
+    {
+        float duration = 0.3f;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float pop = 1f + 0.3f * Mathf.Sin(t / duration * Mathf.PI);  // 1 → 1.3 → 1
+            transform.localScale = baseScale * pop;
+            yield return null;
+        }
+        transform.localScale = baseScale;
     }
 
     // 선택되면 살짝 노랗게 표시

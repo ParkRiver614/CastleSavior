@@ -1508,7 +1508,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -600, y: 20}
+  m_AnchoredPosition: {x: -683, y: 41}
   m_SizeDelta: {x: 450, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &587318888
@@ -4338,7 +4338,7 @@ MonoBehaviour:
   - {fileID: 198739358}
   - {fileID: 768315246}
   castleHp: 5
-  gold: 120
+  gold: 400
   aliveEnemies: 0
   started: 0
   isPaused: 0
@@ -9395,6 +9395,8 @@ MonoBehaviour:
   foundationPrefab: {fileID: 8549104668183403989, guid: ca2b0948b20a5e34ab5b850fa6e54930, type: 3}
   foundationCost: 30
   maxFoundations: 6
+  foundationOffset: {x: 0, y: -0.25}
+  turretOffset: {x: 0, y: 0.2}
   grid: {fileID: 639138184}
   groundTilemap: {fileID: 1665779910}
   pathTilemap: {fileID: 877349016}

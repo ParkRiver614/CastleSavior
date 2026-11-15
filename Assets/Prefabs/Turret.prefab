@@ -108,8 +108,13 @@ MonoBehaviour:
   range: 2.5
   fireInterval: 1
   level: 1
-  projectilePrefab: {fileID: 9086510841269472311, guid: a05b1e37eeb69e74595cbf730e7bb1c0, type: 3}
-  levelSprites: []
+  levels:
+  - sprite: {fileID: -3386026482259287150, guid: c55cefad705eef94ab5a209121b7ef8e, type: 3}
+    projectilePrefab: {fileID: 9086510841269472311, guid: a05b1e37eeb69e74595cbf730e7bb1c0, type: 3}
+  - sprite: {fileID: 4164857684776503533, guid: 6ae887358bea5e548994988641047b21, type: 3}
+    projectilePrefab: {fileID: 9086510841269472311, guid: 440369328c49bf24e87d5c34462e3dcb, type: 3}
+  - sprite: {fileID: 3583947515951447496, guid: e2bd7cc28864d184fb137add409390bc, type: 3}
+    projectilePrefab: {fileID: 9086510841269472311, guid: 329a1e31f325d1848b234f17ec7f131b, type: 3}
 --- !u!58 &4114469743340526839
 CircleCollider2D:
   m_ObjectHideFlags: 0
