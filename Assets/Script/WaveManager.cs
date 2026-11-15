@@ -33,6 +33,7 @@ public class WaveManager : MonoBehaviour
     // HUD가 읽어 가는 값 (읽기 전용)
     public int CurrentWave => currentWave;
     public int TotalWaves => waves.Length;
+    public bool WaveRunning => waveRunning;   // 웨이브가 진행 중인지 (BuildManager가 읽음)
 
     void Start()
     {
