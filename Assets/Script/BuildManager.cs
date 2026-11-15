@@ -161,6 +161,7 @@ public class BuildManager : MonoBehaviour
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return false;
 
+        if (!Camera.main.pixelRect.Contains(Input.mousePosition)) return false;     // 카메라 밖
         if (!groundTilemap.HasTile(cell)) return false;   // 맵 밖
         if (pathTilemap.HasTile(cell)) return false;      // 길 위
         if (occupied.Contains(cell)) return false;        // 이미 포탑이 있음
