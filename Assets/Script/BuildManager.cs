@@ -45,6 +45,13 @@ public class BuildManager : MonoBehaviour
 
     void Update()
     {
+        // 시작 화면, 일시정지, 결과 화면에서는 입력을 받지 않음
+        if (!GameManager.Instance.IsPlaying)
+        {
+            if (dragging) EndDrag();   // 드래그 중에 멈췄다면 취소
+            return;
+        }
+
         if (dragging)
             UpdateDrag();
         else if (Input.GetMouseButtonDown(0))
@@ -80,6 +87,7 @@ public class BuildManager : MonoBehaviour
     // ---------- 드래그 시작 (TowerDragButton이 호출) ----------
     public void BeginDrag()
     {
+        if (!GameManager.Instance.IsPlaying) return;
         if (dragging) return;
 
         if (GameManager.Instance.gold < buildCost)

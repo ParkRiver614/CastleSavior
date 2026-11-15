@@ -55,6 +55,7 @@ public class WaveManager : MonoBehaviour
     // '다음 웨이브' 버튼을 누르면 호출됨
     void StartNextWave()
     {
+        if (!GameManager.Instance.IsPlaying) return;
         if (waveRunning || currentWave >= waves.Length) return;
 
         currentWave++;

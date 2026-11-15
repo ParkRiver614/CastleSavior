@@ -13,9 +13,14 @@ public class GameManager : MonoBehaviour
     public int gold = 120;
     public int aliveEnemies = 0;
 
-    // 게임 종료 상태
+    // 게임 진행 상태
+    public bool started = false;     // '게임 시작' 버튼을 눌렀는지
+    public bool isPaused = false;    // 일시정지 중인지
     public bool isGameOver = false;
     public bool isCleared = false;
+
+    // 지금 실제로 플레이 중인지 (입력과 웨이브 시작을 허용할지 판단)
+    public bool IsPlaying => started && !isPaused && !isGameOver && !isCleared;
 
     void Awake()
     {
@@ -59,14 +64,16 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         isGameOver = true;
-        Debug.Log("게임 오버");   // 결과 화면은 10단계에서 만듦
+        if (UIManager.Instance != null)
+            UIManager.Instance.ShowResult(false);   // 결과 화면: 게임 오버
     }
 
     // 5웨이브를 모두 막으면 WaveManager가 호출
     public void Clear()
     {
-        if (isGameOver) return;
+        if (isGameOver || isCleared) return;
         isCleared = true;
-        Debug.Log("게임 클리어");  // 결과 화면은 10단계에서 만듦
+        if (UIManager.Instance != null)
+            UIManager.Instance.ShowResult(true);    // 결과 화면: 게임 클리어
     }
 }
