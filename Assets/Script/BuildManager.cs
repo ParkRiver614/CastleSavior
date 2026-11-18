@@ -10,6 +10,7 @@ public class BuildManager : MonoBehaviour
     [Header("포탑 규칙 (기획서 수치)")]
     public Turret turretPrefab;
     public int buildCost = 60;
+    public float sellRefundRate = 0.5f;        // 판매 환급 비율 (기획서: 설치 비용의 50%)
     public int[] upgradeCosts = { 80, 120 };   // 1→2레벨, 2→3레벨
 
     [Header("토대 규칙")]
@@ -35,6 +36,8 @@ public class BuildManager : MonoBehaviour
     public TMP_Text infoText;
     public Button upgradeButton;
     public TMP_Text upgradeButtonText;
+    public Button sellButton;
+    public TMP_Text sellButtonText;
 
     enum DragMode { None, Foundation, Turret }
 
@@ -52,10 +55,13 @@ public class BuildManager : MonoBehaviour
     string message;           // 잠깐 보여줄 안내 문구
     float messageTimer;
 
+    GameObject rangeIndicator;   // 선택한 포탑의 사거리 원
     void Start()
     {
         upgradeButton.onClick.AddListener(OnUpgradeClicked);
+        sellButton.onClick.AddListener(OnSellClicked);
         CreateGhost();
+        CreateRangeIndicator();
 
         // Castle Collider 칸이 비어 있으면 태그로 자동 연결
         if (castleCollider == null)
@@ -316,6 +322,36 @@ public class BuildManager : MonoBehaviour
         if (selected != null) selected.SetSelected(false);
         selected = t;
         if (selected != null) selected.SetSelected(true);
+        UpdateRangeIndicator();
+    }
+
+    // 사거리 원 만들기 (Range Circle Sprite가 있을 때만)
+    void CreateRangeIndicator()
+    {
+        if (rangeCircleSprite == null) return;
+
+        rangeIndicator = new GameObject("RangeIndicator");
+        SpriteRenderer rsr = rangeIndicator.AddComponent<SpriteRenderer>();
+        rsr.sprite = rangeCircleSprite;
+        rsr.sortingOrder = 4;                       // 토대(3) 위, 포탑(5) 아래
+        rsr.color = new Color(1f, 1f, 1f, 0.2f);
+        rangeIndicator.SetActive(false);
+    }
+
+    // 선택한 포탑에 맞춰 사거리 원을 표시하거나 숨김
+    void UpdateRangeIndicator()
+    {
+        if (rangeIndicator == null) return;
+
+        if (selected == null)
+        {
+            rangeIndicator.SetActive(false);
+            return;
+        }
+
+        rangeIndicator.transform.position = selected.transform.position;
+        rangeIndicator.transform.localScale = Vector3.one * selected.range * 2f;
+        rangeIndicator.SetActive(true);
     }
 
     // ---------- 강화 ----------
@@ -329,11 +365,39 @@ public class BuildManager : MonoBehaviour
         selected.Upgrade();
     }
 
+    // ---------- 판매 ----------
+    void OnSellClicked()
+    {
+        if (selected == null) return;
+
+        // 이 포탑이 올라가 있는 토대 칸을 찾음
+        Vector3Int? cell = null;
+        foreach (var pair in foundations)
+        {
+            if (pair.Value == selected) { cell = pair.Key; break; }
+        }
+        if (cell == null) return;
+
+        // 설치 비용의 50%를 돌려받음
+        int refund = Mathf.RoundToInt(buildCost * sellRefundRate);
+        GameManager.Instance.AddGold(refund);
+
+        // 토대는 남기고 포탑만 제거
+        foundations[cell.Value] = null;
+        Turret sold = selected;
+        Select(null);                    // 선택 해제 + 사거리 원 숨김
+        Destroy(sold.gameObject);
+
+        ShowMessage($"포탑을 판매했습니다 (+{refund}골드)", 1.5f);
+    }
+
+    // ---------- 하단 패널 표시 ----------
     // ---------- 하단 패널 표시 ----------
     void RefreshUI()
     {
         int gold = GameManager.Instance.gold;
         bool showUpgrade = false;
+        bool showSell = false;
         string text;
 
         if (mode == DragMode.Foundation)
@@ -351,23 +415,32 @@ public class BuildManager : MonoBehaviour
                                  : "토대는 웨이브 사이에만 지을 수 있습니다";
             text = $"토대 {foundations.Count} / {maxFoundations}\n{tip}";
         }
-        else if (selected.level >= Turret.MaxLevel)
-        {
-            text = $"기본 포탑 Lv.{selected.level}\n공격력 {selected.Damage}  |  최대 레벨";
-        }
         else
         {
-            int cost = upgradeCosts[selected.level - 1];
-            text = $"기본 포탑 Lv.{selected.level}\n공격력 {selected.Damage}  →  {selected.Damage + 1}";
-            showUpgrade = true;
-            upgradeButton.interactable = gold >= cost;
-            upgradeButtonText.text = $"강화하기 - {cost}골드";
+            // 포탑이 선택된 상태: 판매 버튼은 항상 표시
+            showSell = true;
+            int refund = Mathf.RoundToInt(buildCost * sellRefundRate);
+            sellButtonText.text = $"판매 +{refund}골드";
+
+            if (selected.level >= Turret.MaxLevel)
+            {
+                text = $"기본 포탑 Lv.{selected.level}\n공격력 {selected.Damage}  |  사거리 {selected.range}  |  최대 레벨";
+            }
+            else
+            {
+                int cost = upgradeCosts[selected.level - 1];
+                text = $"기본 포탑 Lv.{selected.level}\n공격력 {selected.Damage} → {selected.Damage + 1}  |  사거리 {selected.range}";
+                showUpgrade = true;
+                upgradeButton.interactable = gold >= cost;
+                upgradeButtonText.text = $"강화하기 - {cost}골드";
+            }
         }
 
         if (messageTimer > 0) text = message;   // 안내 문구가 있으면 우선 표시
 
         infoText.text = text;
         upgradeButton.gameObject.SetActive(showUpgrade);
+        sellButton.gameObject.SetActive(showSell);
     }
 
     void ShowMessage(string msg, float seconds)
