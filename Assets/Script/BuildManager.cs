@@ -10,13 +10,14 @@ public class BuildManager : MonoBehaviour
     [Header("포탑 규칙 (기획서 수치)")]
     public Turret turretPrefab;
     public int buildCost = 60;
-    public float sellRefundRate = 0.5f;        // 판매 환급 비율 (기획서: 설치 비용의 50%)
     public int[] upgradeCosts = { 80, 120 };   // 1→2레벨, 2→3레벨
+    public float sellRefundRate = 0.5f;        // 포탑 판매 환급 비율
 
     [Header("토대 규칙")]
     public GameObject foundationPrefab;
     public int foundationCost = 30;
     public int maxFoundations = 6;
+    public float foundationRefundRate = 0.5f;  // 토대 판매 환급 비율
 
     [Header("겉모습 위치 보정 (칸 중앙 기준)")]
     public Vector2 foundationOffset = new Vector2(0f, -0.25f);  // 토대를 아래로
@@ -44,18 +45,19 @@ public class BuildManager : MonoBehaviour
     // 토대가 지어진 칸 → 그 위의 포탑 (null이면 빈 토대)
     readonly Dictionary<Vector3Int, Turret> foundations = new Dictionary<Vector3Int, Turret>();
 
-    Turret selected;          // 선택된 포탑
+    Turret selected;                    // 선택된 포탑
+    Foundation selectedFoundation;      // 선택된 토대
     DragMode mode = DragMode.None;
     bool Dragging => mode != DragMode.None;
 
-    GameObject ghost;         // 미리보기 오브젝트
+    GameObject ghost;                   // 드래그 미리보기
     SpriteRenderer ghostSr;
     GameObject ghostRange;
+    GameObject rangeIndicator;          // 선택한 포탑의 사거리 원
 
-    string message;           // 잠깐 보여줄 안내 문구
+    string message;                     // 잠깐 보여줄 안내 문구
     float messageTimer;
 
-    GameObject rangeIndicator;   // 선택한 포탑의 사거리 원
     void Start()
     {
         upgradeButton.onClick.AddListener(OnUpgradeClicked);
@@ -176,7 +178,7 @@ public class BuildManager : MonoBehaviour
 
     void StartDrag(DragMode m)
     {
-        Select(null);
+        ClearSelection();
         mode = m;
         SetGhostLook(m);
         ghost.SetActive(true);
@@ -193,6 +195,7 @@ public class BuildManager : MonoBehaviour
     void UpdateDrag()
     {
         GetCellUnderMouse(out Vector3Int cell, out Vector3 center);
+
         // 고스트도 실제로 놓일 위치(보정 포함)에 보여줌
         Vector2 off = (mode == DragMode.Foundation) ? foundationOffset : turretOffset;
         ghost.transform.position = center + (Vector3)off;
@@ -224,7 +227,13 @@ public class BuildManager : MonoBehaviour
             {
                 if (GameManager.Instance.TrySpend(foundationCost))
                 {
-                    Instantiate(foundationPrefab, center + (Vector3)foundationOffset, Quaternion.identity);
+                    GameObject go = Instantiate(foundationPrefab,
+                        center + (Vector3)foundationOffset, Quaternion.identity);
+
+                    // 토대가 자기 칸 번호를 기억하게 함 (판매할 때 사용)
+                    Foundation f = go.GetComponent<Foundation>();
+                    if (f != null) f.cell = cell;
+
                     foundations[cell] = null;           // 빈 토대로 기록
                 }
             }
@@ -232,9 +241,10 @@ public class BuildManager : MonoBehaviour
             {
                 if (GameManager.Instance.TrySpend(buildCost))
                 {
-                    Turret t = Instantiate(turretPrefab, center + (Vector3)turretOffset, Quaternion.identity);
+                    Turret t = Instantiate(turretPrefab,
+                        center + (Vector3)turretOffset, Quaternion.identity);
                     foundations[cell] = t;              // 토대에 포탑 기록
-                    Select(t);
+                    SelectTurret(t);
                 }
             }
             EndDrag();
@@ -300,32 +310,71 @@ public class BuildManager : MonoBehaviour
         return null;
     }
 
-    // ---------- 설치된 포탑 선택 ----------
+    // ---------- 클릭으로 포탑/토대 선택 ----------
     void HandleSelectClick()
     {
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
         Vector2 world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Collider2D[] hits = Physics2D.OverlapPointAll(world);
 
-        Turret found = null;
-        foreach (Collider2D hit in Physics2D.OverlapPointAll(world))
+        // 1순위: 포탑
+        foreach (Collider2D hit in hits)
         {
-            found = hit.GetComponent<Turret>();
-            if (found != null) break;
+            Turret t = hit.GetComponent<Turret>();
+            if (t != null) { SelectTurret(t); return; }
         }
-        Select(found);   // 빈 땅을 누르면 null → 선택 해제
+
+        // 2순위: 토대
+        foreach (Collider2D hit in hits)
+        {
+            Foundation f = hit.GetComponent<Foundation>();
+            if (f == null) continue;
+
+            // 포탑이 올라간 토대를 눌렀다면 그 포탑을 선택
+            if (foundations.TryGetValue(f.cell, out Turret onIt) && onIt != null)
+                SelectTurret(onIt);
+            else
+                SelectFoundation(f);
+            return;
+        }
+
+        ClearSelection();   // 빈 땅을 누르면 선택 해제
     }
 
-    void Select(Turret t)
+    void SelectTurret(Turret t)
     {
+        if (selectedFoundation != null)
+        {
+            selectedFoundation.SetSelected(false);
+            selectedFoundation = null;
+        }
         if (selected != null) selected.SetSelected(false);
         selected = t;
         if (selected != null) selected.SetSelected(true);
         UpdateRangeIndicator();
     }
 
-    // 사거리 원 만들기 (Range Circle Sprite가 있을 때만)
+    void SelectFoundation(Foundation f)
+    {
+        if (selected != null)
+        {
+            selected.SetSelected(false);
+            selected = null;
+        }
+        if (selectedFoundation != null) selectedFoundation.SetSelected(false);
+        selectedFoundation = f;
+        if (selectedFoundation != null) selectedFoundation.SetSelected(true);
+        UpdateRangeIndicator();
+    }
+
+    void ClearSelection()
+    {
+        SelectTurret(null);   // 토대 선택도 함께 해제됨
+    }
+
+    // ---------- 사거리 원 ----------
     void CreateRangeIndicator()
     {
         if (rangeCircleSprite == null) return;
@@ -338,7 +387,6 @@ public class BuildManager : MonoBehaviour
         rangeIndicator.SetActive(false);
     }
 
-    // 선택한 포탑에 맞춰 사거리 원을 표시하거나 숨김
     void UpdateRangeIndicator()
     {
         if (rangeIndicator == null) return;
@@ -365,11 +413,17 @@ public class BuildManager : MonoBehaviour
         selected.Upgrade();
     }
 
-    // ---------- 판매 ----------
+    // ---------- 판매 (선택한 것이 포탑이면 포탑, 토대이면 토대) ----------
     void OnSellClicked()
     {
-        if (selected == null) return;
+        if (selectedFoundation != null)
+            SellFoundation();
+        else if (selected != null)
+            SellTurret();
+    }
 
+    void SellTurret()
+    {
         // 이 포탑이 올라가 있는 토대 칸을 찾음
         Vector3Int? cell = null;
         foreach (var pair in foundations)
@@ -385,13 +439,42 @@ public class BuildManager : MonoBehaviour
         // 토대는 남기고 포탑만 제거
         foundations[cell.Value] = null;
         Turret sold = selected;
-        Select(null);                    // 선택 해제 + 사거리 원 숨김
+        ClearSelection();                // 선택 해제 + 사거리 원 숨김
         Destroy(sold.gameObject);
 
         ShowMessage($"포탑을 판매했습니다 (+{refund}골드)", 1.5f);
     }
 
-    // ---------- 하단 패널 표시 ----------
+    void SellFoundation()
+    {
+        // 토대는 웨이브 사이에만 판매 가능 (건설과 같은 규칙)
+        if (waveManager != null && waveManager.WaveRunning)
+        {
+            ShowMessage("토대는 웨이브 사이에만 판매할 수 있습니다", 2f);
+            return;
+        }
+
+        // 포탑이 올라가 있으면 판매 불가
+        Vector3Int cell = selectedFoundation.cell;
+        if (foundations.TryGetValue(cell, out Turret onIt) && onIt != null)
+        {
+            ShowMessage("포탑이 있는 토대는 판매할 수 없습니다", 2f);
+            return;
+        }
+
+        // 건설 비용의 50%를 돌려받음
+        int refund = Mathf.RoundToInt(foundationCost * foundationRefundRate);
+        GameManager.Instance.AddGold(refund);
+
+        // 칸 기록을 지우면 토대 개수가 줄고, 그 칸에 다시 지을 수 있음
+        foundations.Remove(cell);
+        Foundation sold = selectedFoundation;
+        ClearSelection();
+        Destroy(sold.gameObject);
+
+        ShowMessage($"토대를 판매했습니다 (+{refund}골드)", 1.5f);
+    }
+
     // ---------- 하단 패널 표시 ----------
     void RefreshUI()
     {
@@ -408,6 +491,18 @@ public class BuildManager : MonoBehaviour
         {
             text = "빈 토대 위에 놓으세요\n(우클릭: 취소)";
         }
+        else if (selectedFoundation != null)
+        {
+            // 빈 토대가 선택된 상태
+            bool running = waveManager != null && waveManager.WaveRunning;
+            int refund = Mathf.RoundToInt(foundationCost * foundationRefundRate);
+
+            showSell = true;
+            sellButton.interactable = !running;
+            sellButtonText.text = $"토대 판매 +{refund}골드";
+            text = running ? "빈 토대\n웨이브 중에는 판매할 수 없습니다"
+                           : $"빈 토대\n판매하면 {refund}골드를 돌려받습니다";
+        }
         else if (selected == null)
         {
             bool running = waveManager != null && waveManager.WaveRunning;
@@ -419,6 +514,7 @@ public class BuildManager : MonoBehaviour
         {
             // 포탑이 선택된 상태: 판매 버튼은 항상 표시
             showSell = true;
+            sellButton.interactable = true;
             int refund = Mathf.RoundToInt(buildCost * sellRefundRate);
             sellButtonText.text = $"판매 +{refund}골드";
 
