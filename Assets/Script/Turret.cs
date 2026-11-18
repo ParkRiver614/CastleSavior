@@ -65,18 +65,22 @@ public class Turret : MonoBehaviour
     }
 
     // 사거리 안에서 가장 가까운 적을 반환
+    // 사거리 안의 적 중 '성에 가장 가까운' 적을 반환 (기획서: 성에 가까운 적 우선)
     Enemy FindTarget()
     {
         Enemy best = null;
-        float bestDist = range;
+        float bestRemain = float.MaxValue;
 
         foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
         {
             float d = Vector2.Distance(transform.position, e.transform.position);
-            if (d <= bestDist)
+            if (d > range) continue;                // 사거리 밖은 후보에서 제외
+
+            float remain = e.RemainingDistance();   // 성까지 남은 경로 거리
+            if (remain < bestRemain)
             {
                 best = e;
-                bestDist = d;
+                bestRemain = remain;
             }
         }
         return best;

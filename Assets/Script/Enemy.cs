@@ -31,6 +31,23 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // 성까지 길을 따라 남은 거리 (값이 작을수록 성에 가까움)
+    public float RemainingDistance()
+    {
+        // 아직 Start()가 실행되기 전이면 가장 뒤로 취급
+        if (waypoints == null || wpIndex >= waypoints.Length)
+            return float.MaxValue;
+
+        // 지금 향하는 웨이포인트까지의 거리
+        float d = Vector3.Distance(transform.position, waypoints[wpIndex].position);
+
+        // 그 뒤에 남은 구간들의 길이를 모두 더함
+        for (int i = wpIndex; i < waypoints.Length - 1; i++)
+            d += Vector3.Distance(waypoints[i].position, waypoints[i + 1].position);
+
+        return d;
+    }
+
     void ReachCastle()
     {
         GameManager.Instance.DamageCastle(1);   // 성 체력 -1 감소
