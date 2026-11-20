@@ -17,6 +17,7 @@ public class SpawnGroup
 public class Wave
 {
     public float hpScale = 1f;   // 이 웨이브 적의 체력 배율
+    public string message;       // 웨이브 시작 알림 문구 (비워도 됨)
     public SpawnGroup[] groups;
 }
 
@@ -29,6 +30,7 @@ public class WaveManager : MonoBehaviour
     public bool shuffleOrder = true;   // 체크하면 같은 웨이브 안의 적을 무작위 순서로 생성
 
     [Header("UI 연결")]
+    public WaveBanner banner;          // 웨이브 시작 알림 (비워 두면 표시 안 함)
     public Button nextWaveButton;
 
     int currentWave = 0;     // 지금까지 시작한 웨이브 수 (0이면 아직 시작 전)
@@ -71,6 +73,11 @@ public class WaveManager : MonoBehaviour
         if (waveRunning || currentWave >= waves.Length) return;
 
         currentWave++;
+
+        if (banner != null)
+            banner.Show(currentWave, waves.Length, waves[currentWave - 1].message,
+                        HpScaleOf(currentWave), currentWave > 1 ? HpScaleOf(currentWave - 1) : 0f);
+
         StartCoroutine(RunWave(waves[currentWave - 1]));
     }
 
