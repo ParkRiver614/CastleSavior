@@ -1588,15 +1588,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 32
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 20
+  m_fontSizeMax: 32
   m_fontStyle: 1
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -1607,7 +1607,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 3
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
@@ -3713,17 +3713,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveManager
   waves:
-  - hpScale: 1
+  - hpScale: 1.5
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 4
       interval: 2
-  - hpScale: 1
+  - hpScale: 1.8
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 6
       interval: 1.8
-  - hpScale: 1
+  - hpScale: 2.1
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 6
@@ -3731,7 +3731,7 @@ MonoBehaviour:
     - prefab: {fileID: 5665509326392799893, guid: 04a82b8d8b92fb84e8bfa3f35f0251d6, type: 3}
       count: 2
       interval: 1.5
-  - hpScale: 1.2
+  - hpScale: 2.4
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 8
@@ -3739,7 +3739,7 @@ MonoBehaviour:
     - prefab: {fileID: 5665509326392799893, guid: 04a82b8d8b92fb84e8bfa3f35f0251d6, type: 3}
       count: 3
       interval: 1.3
-  - hpScale: 1.2
+  - hpScale: 2.7
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 7
@@ -3750,7 +3750,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 2
       interval: 1.3
-  - hpScale: 1
+  - hpScale: 3
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 8
@@ -3761,7 +3761,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 2
       interval: 1.1
-  - hpScale: 1
+  - hpScale: 3.4
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 8
@@ -3772,7 +3772,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 3
       interval: 1
-  - hpScale: 1
+  - hpScale: 3.8
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 9
@@ -3783,7 +3783,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 3
       interval: 1
-  - hpScale: 1.8
+  - hpScale: 4.4
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 10
@@ -3794,7 +3794,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 4
       interval: 0.9
-  - hpScale: 2.2
+  - hpScale: 5
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 10
@@ -3805,6 +3805,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 5
       interval: 0.8
+  shuffleOrder: 1
   nextWaveButton: {fileID: 1902062623}
 --- !u!4 &1218472035
 Transform:
@@ -9721,7 +9722,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuildManager
   turretPrefab: {fileID: 8251781396536326020, guid: 073b8272585362743b113e52422f9d1e, type: 3}
   buildCost: 60
-  upgradeCosts: 5000000078000000
+  upgradeCosts: 64000000a0000000
   sellRefundRate: 0.5
   unlockAfterWave: 0300000007000000
   foundationPrefab: {fileID: 8549104668183403989, guid: ca2b0948b20a5e34ab5b850fa6e54930, type: 3}
