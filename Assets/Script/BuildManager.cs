@@ -538,7 +538,9 @@ public class BuildManager : MonoBehaviour
             {
                 // 웨이브 해금 전: 강화 버튼은 보이지만 눌러도 잠겨 있음
                 int need = unlockAfterWave[selected.level - 1];
-                text = $"기본 포탑 Lv.{selected.level}\n공격력 {selected.Damage}  |  사거리 {selected.range}\nLv.{selected.level + 1} 강화는 {need}웨이브 클리어 후 해금 (현재 {ClearedWaves}웨이브 클리어)";
+                text = $"기본 포탑 Lv.{selected.level}\n" +
+                       $"공격력 {selected.Damage}  |  사거리 {selected.range}\n" +
+                       $"<size=85%><color=#FFD54F>Lv.{selected.level + 1} 해금: {need}웨이브 클리어 후 ({ClearedWaves}/{need})</color></size>";
                 showUpgrade = true;
                 upgradeButton.interactable = false;
                 upgradeButtonText.text = "강화 잠김";
