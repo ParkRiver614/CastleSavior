@@ -73,6 +73,7 @@ public class Turret : MonoBehaviour
 
         foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
         {
+            if (e.IsDead) continue;
             float d = Vector2.Distance(transform.position, e.transform.position);
             if (d > range) continue;                // 사거리 밖은 후보에서 제외
 

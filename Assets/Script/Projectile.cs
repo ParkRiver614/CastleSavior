@@ -18,8 +18,8 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
-        // 대상이 이미 죽었으면 투사체도 사라짐
-        if (target == null)
+        // 대상이 사라졌거나 이미 죽었으면 투사체도 사라짐
+        if (target == null || target.IsDead)
         {
             Destroy(gameObject);
             return;

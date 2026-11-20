@@ -52,6 +52,15 @@ public class WaveManager : MonoBehaviour
         nextWaveButton.interactable = canStart;
     }
 
+        // 지금 살아 있는 적을 직접 센다 (카운터가 어긋나도 정확함)
+    int CountLivingEnemies()
+    {
+        int n = 0;
+        foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
+            if (!e.IsDead) n++;
+        return n;
+    }
+
     // '다음 웨이브' 버튼을 누르면 호출됨
     void StartNextWave()
     {
@@ -94,12 +103,14 @@ public class WaveManager : MonoBehaviour
             }
         }
 
-        // 3) 남은 적이 모두 사라질 때까지(처치 또는 성 도착) 대기
-        while (gm.aliveEnemies > 0 && !gm.isGameOver)
+        // 3) 살아 있는 적이 하나도 없을 때까지 대기 (실제로 센 값 기준)
+        while (CountLivingEnemies() > 0 && !gm.isGameOver)
             yield return null;
 
-        waveRunning = false;
-        if (gm.isGameOver) yield break;
+        gm.aliveEnemies = 0;   // 혹시 어긋났어도 웨이브가 끝난 시점에 맞춰 둠
+        waveRunning = false;                 //  웨이브 종료 표시
+        if (gm.isGameOver) yield break;      //  게임 오버면 여기서 끝
+
 
         // 4) 마지막 웨이브까지 막았고 성 체력이 1 이상이면 클리어
         if (currentWave >= waves.Length)
