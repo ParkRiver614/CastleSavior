@@ -13,6 +13,9 @@ public class BuildManager : MonoBehaviour
     public int[] upgradeCosts = { 80, 120 };   // 1→2레벨, 2→3레벨
     public float sellRefundRate = 0.5f;        // 포탑 판매 환급 비율
 
+    [Header("강화 해금 (클리어한 웨이브 수 기준)")]
+    public int[] unlockAfterWave = { 3, 7 };   // 1→2레벨: 3웨이브 클리어 후, 2→3레벨: 7웨이브 클리어 후
+
     [Header("토대 규칙")]
     public GameObject foundationPrefab;
     public int foundationCost = 30;
@@ -57,6 +60,7 @@ public class BuildManager : MonoBehaviour
 
     string message;                     // 잠깐 보여줄 안내 문구
     float messageTimer;
+    int lastCleared;                    // 직전에 확인한 클리어 웨이브 수 (해금 알림용)
 
     void Start()
     {
@@ -92,6 +96,7 @@ public class BuildManager : MonoBehaviour
             HandleSelectClick();
 
         if (messageTimer > 0) messageTimer -= Time.deltaTime;
+        CheckUnlockMessage();
         RefreshUI();
     }
 
@@ -408,6 +413,13 @@ public class BuildManager : MonoBehaviour
         if (selected == null) return;
         if (selected.level >= Turret.MaxLevel) return;
 
+        // 웨이브 해금 조건을 만족하지 않으면 강화 불가
+        if (!IsUpgradeUnlocked(selected.level))
+        {
+            ShowMessage($"Lv.{selected.level + 1} 강화는 {unlockAfterWave[selected.level - 1]}웨이브 클리어 후 해금됩니다", 2f);
+            return;
+        }
+
         int cost = upgradeCosts[selected.level - 1];
         if (!GameManager.Instance.TrySpend(cost)) return;   // 골드 부족 시 중단
         selected.Upgrade();
@@ -522,6 +534,15 @@ public class BuildManager : MonoBehaviour
             {
                 text = $"기본 포탑 Lv.{selected.level}\n공격력 {selected.Damage}  |  사거리 {selected.range}  |  최대 레벨";
             }
+            else if (!IsUpgradeUnlocked(selected.level))
+            {
+                // 웨이브 해금 전: 강화 버튼은 보이지만 눌러도 잠겨 있음
+                int need = unlockAfterWave[selected.level - 1];
+                text = $"기본 포탑 Lv.{selected.level}\n공격력 {selected.Damage}  |  사거리 {selected.range}\nLv.{selected.level + 1} 강화는 {need}웨이브 클리어 후 해금 (현재 {ClearedWaves}웨이브 클리어)";
+                showUpgrade = true;
+                upgradeButton.interactable = false;
+                upgradeButtonText.text = "강화 잠김";
+            }
             else
             {
                 int cost = upgradeCosts[selected.level - 1];
@@ -537,6 +558,31 @@ public class BuildManager : MonoBehaviour
         infoText.text = text;
         upgradeButton.gameObject.SetActive(showUpgrade);
         sellButton.gameObject.SetActive(showSell);
+    }
+
+    // 클리어한 웨이브 수 (WaveManager가 없으면 0)
+    int ClearedWaves => waveManager != null ? waveManager.ClearedWaves : 0;
+
+    // 이 레벨의 포탑을 다음 레벨로 강화할 수 있는지 (웨이브 해금 조건)
+    bool IsUpgradeUnlocked(int level)
+    {
+        int idx = level - 1;
+        if (idx < 0 || idx >= unlockAfterWave.Length) return true;
+        return ClearedWaves >= unlockAfterWave[idx];
+    }
+
+    // 새로 해금되는 순간에 안내 문구를 보여줌
+    void CheckUnlockMessage()
+    {
+        int cleared = ClearedWaves;
+        if (cleared == lastCleared) return;
+        lastCleared = cleared;
+
+        for (int i = 0; i < unlockAfterWave.Length; i++)
+        {
+            if (cleared == unlockAfterWave[i])
+                ShowMessage($"{unlockAfterWave[i]}웨이브 클리어! 포탑 Lv.{i + 2} 강화가 해금되었습니다", 3f);
+        }
     }
 
     void ShowMessage(string msg, float seconds)

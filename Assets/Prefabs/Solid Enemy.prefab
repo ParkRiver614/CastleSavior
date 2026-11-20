@@ -105,8 +105,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3ccc3dad90d3a4eab25ec1b4ab58c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  speed: 1.2
-  maxHp: 8
+  speed: 1
+  maxHp: 10
   goldReward: 15
 --- !u!58 &975549666082394632
 CircleCollider2D:
