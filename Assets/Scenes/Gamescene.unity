@@ -3739,7 +3739,7 @@ MonoBehaviour:
     - prefab: {fileID: 5665509326392799893, guid: 04a82b8d8b92fb84e8bfa3f35f0251d6, type: 3}
       count: 3
       interval: 1.3
-  - hpScale: 2.7
+  - hpScale: 2.6
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 7
@@ -3750,7 +3750,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 2
       interval: 1.3
-  - hpScale: 3
+  - hpScale: 2.9
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 8
@@ -3761,7 +3761,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 2
       interval: 1.1
-  - hpScale: 3.4
+  - hpScale: 3.2
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 8
@@ -3772,7 +3772,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 3
       interval: 1
-  - hpScale: 3.8
+  - hpScale: 3.6
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 9
@@ -3783,7 +3783,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 3
       interval: 1
-  - hpScale: 4.4
+  - hpScale: 4
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 10
@@ -3794,7 +3794,7 @@ MonoBehaviour:
     - prefab: {fileID: 7445881657597820698, guid: efbffc35b81bd92488ed6f5d10f3c675, type: 3}
       count: 4
       interval: 0.9
-  - hpScale: 5
+  - hpScale: 4.5
     groups:
     - prefab: {fileID: 8716956122734972423, guid: 22b00dc982c560148af7b5d5bdfd4c01, type: 3}
       count: 10

@@ -41,6 +41,14 @@ public class WaveManager : MonoBehaviour
 
     // 클리어한 웨이브 수: 진행 중이면 현재 웨이브는 아직 클리어 전
     public int ClearedWaves => waveRunning ? currentWave - 1 : currentWave;
+    
+    // 해당 웨이브(1부터 시작)의 체력 배율 (HUD 표시용)
+    public float HpScaleOf(int waveNumber)
+    {
+        if (waveNumber < 1 || waveNumber > waves.Length) return 1f;
+        float s = waves[waveNumber - 1].hpScale;
+        return s > 0f ? s : 1f;
+    }
 
     void Start()
     {
