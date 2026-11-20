@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +24,9 @@ public class WaveManager : MonoBehaviour
 {
     [Header("웨이브 구성 (10개)")]
     public Wave[] waves;
+
+    [Header("적 등장 순서")]
+    public bool shuffleOrder = true;   // 체크하면 같은 웨이브 안의 적을 무작위 순서로 생성
 
     [Header("UI 연결")]
     public Button nextWaveButton;
@@ -52,15 +56,6 @@ public class WaveManager : MonoBehaviour
         nextWaveButton.interactable = canStart;
     }
 
-        // 지금 살아 있는 적을 직접 센다 (카운터가 어긋나도 정확함)
-    int CountLivingEnemies()
-    {
-        int n = 0;
-        foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
-            if (!e.IsDead) n++;
-        return n;
-    }
-
     // '다음 웨이브' 버튼을 누르면 호출됨
     void StartNextWave()
     {
@@ -71,6 +66,15 @@ public class WaveManager : MonoBehaviour
         StartCoroutine(RunWave(waves[currentWave - 1]));
     }
 
+    // 지금 살아 있는 적을 직접 센다 (카운터가 어긋나도 정확함)
+    int CountLivingEnemies()
+    {
+        int n = 0;
+        foreach (Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
+            if (!e.IsDead) n++;
+        return n;
+    }
+
     IEnumerator RunWave(Wave wave)
     {
         waveRunning = true;
@@ -79,41 +83,53 @@ public class WaveManager : MonoBehaviour
         // 배율이 0 이하(값이 비어 있는 경우)면 1로 취급
         float scale = wave.hpScale > 0f ? wave.hpScale : 1f;
 
-        // 1) 이 웨이브의 전체 적 수를 먼저 '남은 적'에 더해 둠
+        // 1) 이 웨이브의 적을 '한 마리씩' 목록으로 펼침
+        List<(Enemy prefab, float interval)> queue = new List<(Enemy prefab, float interval)>();
         foreach (SpawnGroup g in wave.groups)
-            gm.aliveEnemies += g.count;
-
-        // 2) 그룹 순서대로, 정해진 간격으로 적 생성
-        foreach (SpawnGroup g in wave.groups)
-        {
             for (int i = 0; i < g.count; i++)
+                queue.Add((g.prefab, g.interval));
+
+        // 2) 무작위 순서로 섞기
+        if (shuffleOrder) Shuffle(queue);
+
+        // 3) 전체 적 수를 '남은 적'에 먼저 더해 둠 (HUD 표시용)
+        gm.aliveEnemies += queue.Count;
+
+        // 4) 섞인 순서대로 생성
+        foreach (var entry in queue)
+        {
+            if (gm.isGameOver)          // 도중에 게임이 끝나면 중단
             {
-                if (gm.isGameOver)          // 도중에 게임이 끝나면 중단
-                {
-                    waveRunning = false;
-                    yield break;
-                }
-
-                Enemy e = Instantiate(g.prefab);
-
-                // 복제본의 체력만 배율 적용 (프리팹 원본은 그대로)
-                e.maxHp = Mathf.Max(1, Mathf.RoundToInt(e.maxHp * scale));
-
-                yield return new WaitForSeconds(g.interval);
+                waveRunning = false;
+                yield break;
             }
+
+            Enemy e = Instantiate(entry.prefab);
+            e.maxHp = Mathf.Max(1, Mathf.RoundToInt(e.maxHp * scale));   // 복제본에만 체력 배율 적용
+
+            yield return new WaitForSeconds(entry.interval);
         }
 
-        // 3) 살아 있는 적이 하나도 없을 때까지 대기 (실제로 센 값 기준)
+        // 5) 살아 있는 적이 하나도 없을 때까지 대기 (실제로 센 값 기준)
         while (CountLivingEnemies() > 0 && !gm.isGameOver)
             yield return null;
 
-        gm.aliveEnemies = 0;   // 혹시 어긋났어도 웨이브가 끝난 시점에 맞춰 둠
-        waveRunning = false;                 //  웨이브 종료 표시
-        if (gm.isGameOver) yield break;      //  게임 오버면 여기서 끝
+        gm.aliveEnemies = 0;        // 혹시 어긋났어도 웨이브가 끝난 시점에 맞춰 둠
+        waveRunning = false;        // 웨이브 종료 표시
+        if (gm.isGameOver) yield break;
 
-
-        // 4) 마지막 웨이브까지 막았고 성 체력이 1 이상이면 클리어
+        // 6) 마지막 웨이브까지 막았고 성 체력이 1 이상이면 클리어
         if (currentWave >= waves.Length)
             gm.Clear();
+    }
+
+    // 목록을 무작위로 섞음 (Fisher-Yates)
+    void Shuffle<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);   // 0 이상 i 이하
+            (list[i], list[j]) = (list[j], list[i]);
+        }
     }
 }
