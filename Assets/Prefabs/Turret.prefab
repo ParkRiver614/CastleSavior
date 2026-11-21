@@ -109,6 +109,8 @@ MonoBehaviour:
   fireInterval: 1
   level: 1
   fireOffset: {x: 0, y: 0.9}
+  ringSprite: {fileID: -2413806693520163455, guid: 4c27d75dbebfc024ba0ffdc131485a0b, type: 3}
+  upgradeColor: {r: 1, g: 0.8, b: 0.3, a: 1}
   levels:
   - sprite: {fileID: -3386026482259287150, guid: c55cefad705eef94ab5a209121b7ef8e, type: 3}
     projectilePrefab: {fileID: 9086510841269472311, guid: a05b1e37eeb69e74595cbf730e7bb1c0, type: 3}
