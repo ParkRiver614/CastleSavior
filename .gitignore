@@ -114,3 +114,7 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ss]ceneDependencyCache*
 /Assets/Sprites/Simple Tower Defense/
 /Assets/Sprites/Simple Tower Defense.meta
+
+# Unity 크래시 복구용 씬 백업
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/_Recovery.meta

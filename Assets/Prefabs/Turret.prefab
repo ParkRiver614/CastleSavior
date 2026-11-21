@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6859284992956565992}
   - component: {fileID: 9033204779844129626}
   - component: {fileID: 8251781396536326020}
-  - component: {fileID: 4114469743340526839}
+  - component: {fileID: -2140193415815411832}
   m_Layer: 0
   m_Name: Turret
   m_TagString: Untagged
@@ -121,8 +121,8 @@ MonoBehaviour:
   - sprite: {fileID: 3583947515951447496, guid: e2bd7cc28864d184fb137add409390bc, type: 3}
     projectilePrefab: {fileID: 9086510841269472311, guid: 329a1e31f325d1848b234f17ec7f131b, type: 3}
     scale: 0.9
---- !u!58 &4114469743340526839
-CircleCollider2D:
+--- !u!61 &-2140193415815411832
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -155,5 +155,15 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.2}
-  m_Radius: 0.45
+  m_Offset: {x: 0.00582128, y: 0.12071555}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0}
+    oldSize: {x: 0.16, y: 0.23}
+    newSize: {x: 0.16, y: 0.23}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.24438573, y: 0.34171242}
+  m_EdgeRadius: 0

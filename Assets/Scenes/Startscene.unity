@@ -7442,7 +7442,7 @@ MonoBehaviour:
   m_text: Castle Savior
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7322c5fe4e3913648a974fb6b1adee79, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 709bdf1b865bdec4b8abb3cc555db772, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: f4d9a5a82e74989409a4412f4bcfbb5c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
