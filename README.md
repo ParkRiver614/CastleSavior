@@ -90,3 +90,5 @@ Unity 6로 만든 2D 타워 디펜스 게임입니다. 적들은 정해진 길�
 
 - **Art**: ["Simple Tower Defense"](https://skyel13.itch.io/simple-tower-defense) by Skyel, CC BY-ND 4.0
 - **Font**: Noto Sans KR, SIL Open Font License 1.1
+- **Sound effects**: [Kenney](https://kenney.nl) (CC0)
+- **Music**: "The Old Tower Inn" by RandomMind ([OpenGameArt](https://opengameart.org/content/medieval-the-old-tower-inn), CC0)

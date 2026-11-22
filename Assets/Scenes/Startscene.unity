@@ -526,7 +526,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "Art: \"Simple Tower Defense\" by Skyel (skyel13.itch.io) \xB7 CC BY-ND
-    4.0\r\nFont: Noto Sans KR \xB7 SIL Open Font License 1.1"
+    4.0  \xB7  Font: Noto Sans KR \xB7 SIL Open Font License 1.1\r\nSound: Kenney
+    (CC0)  \xB7  Music: \"The Old Tower Inn\" by RandomMind (CC0)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7322c5fe4e3913648a974fb6b1adee79, type: 2}
   m_sharedMaterial: {fileID: -914824808813431427, guid: 7322c5fe4e3913648a974fb6b1adee79, type: 2}
@@ -7610,6 +7611,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 576629394}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1221642856
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.70144
+      objectReference: {fileID: 0}
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.71392
+      objectReference: {fileID: 0}
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2311437129374867963, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695797241407370111, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
+      propertyPath: m_Name
+      value: AudioManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 78d02dd6e846bb44bb20d41298ea285d, type: 3}
 --- !u!1 &1258923394
 GameObject:
   m_ObjectHideFlags: 0
@@ -9623,3 +9681,4 @@ SceneRoots:
   - {fileID: 1393924341}
   - {fileID: 576629394}
   - {fileID: 1147197916}
+  - {fileID: 1221642856}
