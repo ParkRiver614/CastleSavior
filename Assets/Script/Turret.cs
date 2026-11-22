@@ -64,6 +64,7 @@ public class Turret : MonoBehaviour
         // 포탑 몸통 위치에서 현재 레벨의 투사체 발사
         Vector3 firePos = transform.position + (Vector3)fireOffset;
         Projectile p = Instantiate(data.projectilePrefab, firePos, Quaternion.identity);
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayShoot();
         p.Init(target, Damage);
 
         timer = fireInterval;
@@ -103,6 +104,7 @@ public class Turret : MonoBehaviour
     {
         if (level >= MaxLevel) return;
         level++;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUpgrade();
         UpdateVisual();
         StopAllCoroutines();
         StartCoroutine(UpgradeEffect());

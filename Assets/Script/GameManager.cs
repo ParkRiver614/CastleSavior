@@ -64,15 +64,17 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         isGameOver = true;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayLose();
         if (UIManager.Instance != null)
             UIManager.Instance.ShowResult(false);   // 결과 화면: 게임 오버
     }
 
-    // 5웨이브를 모두 막으면 WaveManager가 호출
+    // 10웨이브를 모두 막으면 WaveManager가 호출
     public void Clear()
     {
         if (isGameOver || isCleared) return;
         isCleared = true;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayWin();
         if (UIManager.Instance != null)
             UIManager.Instance.ShowResult(true);    // 결과 화면: 게임 클리어
     }

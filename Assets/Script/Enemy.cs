@@ -68,6 +68,7 @@ public class Enemy : MonoBehaviour
         if (dead) return;
         dead = true;
         GameManager.Instance.DamageCastle(1);   // ¼º Ã¼·Â -1
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayCastleHit();
         GameManager.Instance.OnEnemyRemoved();
         Destroy(gameObject);
     }
@@ -84,6 +85,7 @@ public class Enemy : MonoBehaviour
         {
             dead = true;
             GameManager.Instance.AddGold(goldReward);
+            if (AudioManager.Instance != null) AudioManager.Instance.PlayKill();
             GameManager.Instance.OnEnemyRemoved();
             Destroy(gameObject);
         }

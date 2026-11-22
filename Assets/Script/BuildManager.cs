@@ -235,6 +235,8 @@ public class BuildManager : MonoBehaviour
                     GameObject go = Instantiate(foundationPrefab,
                         center + (Vector3)foundationOffset, Quaternion.identity);
 
+                    if (AudioManager.Instance != null) AudioManager.Instance.PlayBuild();
+
                     // 토대가 자기 칸 번호를 기억하게 함 (판매할 때 사용)
                     Foundation f = go.GetComponent<Foundation>();
                     if (f != null) f.cell = cell;
@@ -248,6 +250,7 @@ public class BuildManager : MonoBehaviour
                 {
                     Turret t = Instantiate(turretPrefab,
                         center + (Vector3)turretOffset, Quaternion.identity);
+                    if (AudioManager.Instance != null) AudioManager.Instance.PlayBuild();
                     foundations[cell] = t;              // 토대에 포탑 기록
                     SelectTurret(t);
                 }
